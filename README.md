@@ -1,5 +1,7 @@
 # @solapi/talk-mcp-server
 
+[![npm version](https://img.shields.io/npm/v/@solapi/talk-mcp-server.svg)](https://www.npmjs.com/package/@solapi/talk-mcp-server)
+
 솔라피톡 상담을 AI 에이전트(Claude Code·Claude Desktop·Cursor·자체 Agent SDK)의 **도구**로 다루게 해 주는 MCP 서버입니다.
 SOLAPI 콘솔에서 발급한 API Key 로 인증해 솔라피톡 상담을 조회하고, 사용자 확인을 거쳐 답장·배정·상태 변경을 합니다.
 
