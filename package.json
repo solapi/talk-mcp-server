@@ -1,6 +1,6 @@
 {
   "name": "@solapi/talk-mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "솔라피톡 상담을 AI 에이전트 도구로 다루는 MCP 서버 (stdio 기본, --http 옵션)",
   "license": "MIT",
   "type": "module",
