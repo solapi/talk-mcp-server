@@ -40,12 +40,19 @@ const API_ERROR_HINTS: Record<string, string> = {
   NoteContentRequired: '노트 내용이 비어 있습니다.',
 };
 
+/** API Key 의 허용 IP 제한에 걸렸을 때 게이트웨이가 주는 메시지 */
+const IP_NOT_ALLOWED = /허용되지 않은 IP/;
+
 export function apiErrorResult(error: ApiError): CallToolResult {
   const status = error.status ? ` HTTP ${error.status}` : '';
   // 일부 404 는 { errorCode:'ResourceNotFound', errorMessage:'ConsultNotFound' } 처럼 구체 코드가 message 에 온다
   const hint = API_ERROR_HINTS[error.code] ?? API_ERROR_HINTS[error.message];
   let extra = hint ? `\n${hint}` : '';
-  if (!hint && (error.status === 401 || error.status === 403)) {
+  if (!hint && IP_NOT_ALLOWED.test(error.message)) {
+    // 키는 맞지만 호출 IP 가 그 키의 허용 목록에 없을 때 — "키·매니저 확인" 안내는 오해를 부른다
+    extra =
+      '\n이 API Key 는 허용 IP 가 제한돼 있습니다. SOLAPI 콘솔 > API Key 관리에서 위 IP 를 허용 목록에 추가하거나 IP 제한을 해제하세요.';
+  } else if (!hint && (error.status === 401 || error.status === 403)) {
     extra = '\nAPI Key 가 올바른지, 키 소유자가 이 채널의 매니저인지 확인하세요.';
   }
   return errorResult(`API 오류(${error.code}${status}): ${error.message}${extra}`);

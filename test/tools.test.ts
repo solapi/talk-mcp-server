@@ -183,6 +183,19 @@ describe('읽기 도구', () => {
     const res = await call('list_tags');
     expect(res.isError).toBe(true);
     expect(res.text).toContain('API 오류(Forbidden HTTP 403): 매니저 아님');
+    expect(res.text).toContain('키 소유자가 이 채널의 매니저인지');
+  });
+
+  it('허용 IP 제한에 걸리면 IP 허용 안내를 붙인다', async () => {
+    const { call } = await connect(makeConfig(), () => ({
+      status: 403,
+      body: { errorCode: 'Forbidden', errorMessage: '허용되지 않은 IP(203.0.113.7)로 접근하고 있습니다.' },
+    }));
+    const res = await call('list_tags');
+    expect(res.isError).toBe(true);
+    expect(res.text).toContain('허용되지 않은 IP(203.0.113.7)');
+    expect(res.text).toContain('허용 IP 가 제한돼 있습니다');
+    expect(res.text).not.toContain('키 소유자가 이 채널의 매니저인지');
   });
 });
 
