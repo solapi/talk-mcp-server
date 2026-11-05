@@ -124,7 +124,8 @@
     [
       "@semantic-release/exec",
       {
-        "publishCmd": "npm publish --provenance --access public"
+        "publishCmd": "npm publish --provenance --access public",
+        "successCmd": "if [ -n \"$GITHUB_STEP_SUMMARY\" ]; then { echo '## 📦 Published to npm'; echo; echo '- **@solapi/talk-mcp-server@${nextRelease.version}** (`${nextRelease.gitTag}`)'; echo '- https://www.npmjs.com/package/@solapi/talk-mcp-server/v/${nextRelease.version}'; } >> \"$GITHUB_STEP_SUMMARY\"; fi"
       }
     ],
     [
