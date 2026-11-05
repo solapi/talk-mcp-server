@@ -1,0 +1,51 @@
+name: Release
+
+# main 에 머지되면 semantic-release 가 커밋 메시지로 버전을 정하고 npm 에 발행한다.
+# npm 인증은 토큰 없이 OIDC(Trusted Publishing)로 한다 — npm 패키지 설정에 이 레포·워크플로·environment(release)가
+# Trusted Publisher 로 등록돼 있어야 한다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Verify npm version (OIDC trusted publishing needs >= 11.5.1)
+        run: npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint and test
+        run: |
+          npm run lint
+          npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
